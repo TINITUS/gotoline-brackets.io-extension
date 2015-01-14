@@ -8,10 +8,11 @@ define(function (require, exports, module) {
     var CommandManager = brackets.getModule("command/CommandManager"),
         Menus          = brackets.getModule("command/Menus"),
         EditorManager  = brackets.getModule("editor/EditorManager"),        
-        AppInit        = brackets.getModule("utils/AppInit"),        
+        Dialogs         = brackets.getModule("widgets/Dialogs"),
+        DefaultDialogs  = brackets.getModule("widgets/DefaultDialogs"),
+        AppInit        = brackets.getModule("utils/AppInit"),       
         //localization
-        locale         = brackets.getLocale(),
-        Dialog;
+        locale         = brackets.getLocale();
 
 
     // Function to run when the menu item is clicked
@@ -19,9 +20,9 @@ define(function (require, exports, module) {
         var editor  = EditorManager.getActiveEditor(),
             lineToGoTo = 0; 
         if(editor){
-            Dialog.showModalDialogUsingTemplate($("<h4>test</h4>"));
+        	Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, "Info", "Some message");         
             lineToGoTo =  parseInt(prompt('Go To', lineToGoTo));
-            if(editor.getCursorPos().line != lineToGoTo){
+            if(editor.getCursorPos().line != lineToGoTo){            	
                 console.log('Not on ' + lineToGoTo + ' line - taking it there!!!');
                 editor.setCursorPos( (lineToGoTo - 1), 0, true, true);
             }
@@ -31,7 +32,7 @@ define(function (require, exports, module) {
     }
 
     AppInit.appReady(function () {
-        Dialog         = brackets.getModule("widgets/Dialog");
+        
         // First, register a command - a UI-less object associating an id to a handler
         var MY_COMMAND_ID = "mzografski.testExt.gotoline";   // package-style naming to avoid collisions
         CommandManager.register("Go to line...", MY_COMMAND_ID, handleHelloWorld);
