@@ -22,8 +22,17 @@ define(function (require, exports, module) {
             lineToGoTo = 0; 
         if(editor){
             var template = Mustache.render(myModal);
-        	var test = Dialogs.showModalDialogUsingTemplate(template);
+        	var test = Dialogs.showModalDialogUsingTemplate(template).getPromise();
+            //Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, "Test 2", "Test 23423423423423423423");
             console.log(test);
+            test.promise().then(
+                function(data){
+                    console.log(data);
+                },
+                function(error){
+                    console.log(error);
+                }
+            );
             // lineToGoTo =  parseInt(prompt('Go To', lineToGoTo));
             // if(editor.getCursorPos().line != lineToGoTo){            	
             //     console.log('Not on ' + lineToGoTo + ' line - taking it there!!!');
