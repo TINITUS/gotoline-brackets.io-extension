@@ -12,7 +12,8 @@ define(function (require, exports, module) {
         DefaultDialogs  = brackets.getModule("widgets/DefaultDialogs"),
         AppInit        = brackets.getModule("utils/AppInit"),       
         //localization
-        locale         = brackets.getLocale();
+        locale         = brackets.getLocale(),
+        myModal     = require("text!htmlModals/goToLineModal.html");
 
 
     // Function to run when the menu item is clicked
@@ -20,14 +21,16 @@ define(function (require, exports, module) {
         var editor  = EditorManager.getActiveEditor(),
             lineToGoTo = 0; 
         if(editor){
-        	Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, "Info", "Some message");         
-            lineToGoTo =  parseInt(prompt('Go To', lineToGoTo));
-            if(editor.getCursorPos().line != lineToGoTo){            	
-                console.log('Not on ' + lineToGoTo + ' line - taking it there!!!');
-                editor.setCursorPos( (lineToGoTo - 1), 0, true, true);
-            }
-            console.log(editor.getCursorPos());
-            return;            
+            var template = Mustache.render(myModal);
+        	var test = Dialogs.showModalDialogUsingTemplate(template);
+            console.log(test);
+            // lineToGoTo =  parseInt(prompt('Go To', lineToGoTo));
+            // if(editor.getCursorPos().line != lineToGoTo){            	
+            //     console.log('Not on ' + lineToGoTo + ' line - taking it there!!!');
+            //     editor.setCursorPos( (lineToGoTo - 1), 0, true, true);
+            // }
+            // console.log(editor.getCursorPos());
+            //return;            
         }
     }
 
