@@ -19,43 +19,39 @@ define(function (require, exports, module) {
     // Function to run when the menu item is clicked
     function handleHelloWorld() {
         var editor  = EditorManager.getActiveEditor(),
+            currentLine = editor.getCursorPos().line,            
             lineToGoTo = 0; 
         if(editor){
-            var template = Mustache.render(myModal);
-        	var test = Dialogs.showModalDialogUsingTemplate(template).getPromise();
-            //Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, "Test 2", "Test 23423423423423423423");
-            console.log(test);
-            test.promise().then(
-                function(data){
-                    console.log(data);
-                },
-                function(error){
-                    console.log(error);
+
+            var template = Mustache.render(myModal, {"currentLine" : (currentLine + 1)}),
+                dialog = Dialogs.showModalDialogUsingTemplate(template),
+                $dialog = dialog.getElement();                
+            $dialog.on('click','#goToLine',function (){
+                var totalLines = editor.lineCount();
+                var lineToGoTo = parseInt($dialog.find('#inputLineNumber').val());
+                
+                if(lineToGoTo <= totalLines && currentLine != lineToGoTo){
+                    console.log(lineToGoTo);
+                    dialog.close();
+                    editor.setCursorPos(lineToGoTo, 1, true);
                 }
-            );
-            // lineToGoTo =  parseInt(prompt('Go To', lineToGoTo));
-            // if(editor.getCursorPos().line != lineToGoTo){            	
-            //     console.log('Not on ' + lineToGoTo + ' line - taking it there!!!');
-            //     editor.setCursorPos( (lineToGoTo - 1), 0, true, true);
-            // }
-            // console.log(editor.getCursorPos());
-            //return;            
-        }
+                
+            });
+        }         
     }
 
     AppInit.appReady(function () {
         
-        // First, register a command - a UI-less object associating an id to a handler
+        //register a command
         var MY_COMMAND_ID = "mzografski.testExt.gotoline";   // package-style naming to avoid collisions
         CommandManager.register("Go to line...", MY_COMMAND_ID, handleHelloWorld);
 
-        // Then create a menu item bound to the command
-        // The label of the menu item is the name we gave the command (see above)
+        //create a menu item bound to the command        
         var menu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
         menu.addMenuItem(MY_COMMAND_ID);
 
-        // We could also add a key binding at the same time:
-        menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-H");
+        //key binding - if needed
+        //menu.addMenuItem(MY_COMMAND_ID, "Ctrl-Alt-H");
         // (Note: "Ctrl" is automatically mapped to "Cmd" on Mac)
     });
 });
