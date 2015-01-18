@@ -10,7 +10,8 @@ define(function (require, exports, module) {
         EditorManager  = brackets.getModule("editor/EditorManager"),        
         Dialogs         = brackets.getModule("widgets/Dialogs"),
         DefaultDialogs  = brackets.getModule("widgets/DefaultDialogs"),
-        AppInit        = brackets.getModule("utils/AppInit"),       
+        AppInit        = brackets.getModule("utils/AppInit"),               
+        MainViewManager = brackets.getModule("view/MainViewManager"),
         //localization
         locale         = brackets.getLocale(),
         myModal     = require("text!htmlModals/goToLineModal.html");
@@ -18,26 +19,24 @@ define(function (require, exports, module) {
 
     // Function to run when the menu item is clicked
     function handleHelloWorld() {
-        var editor  = EditorManager.getActiveEditor(),
-            currentLine = editor.getCursorPos().line,            
-            lineToGoTo = 0; 
-        if(editor){
+        var editor      = EditorManager.getCurrentFullEditor(),
+            currentLine = editor.getCursorPos().line + 1,
+            totalLines = editor.lineCount(),
+            template    = Mustache.render(myModal, {"currentLine" : currentLine}),
+            dialog      = Dialogs.showModalDialogUsingTemplate(template),
+            $dialog     = dialog.getElement();
 
-            var template = Mustache.render(myModal, {"currentLine" : (currentLine + 1)}),
-                dialog = Dialogs.showModalDialogUsingTemplate(template),
-                $dialog = dialog.getElement();                
-            $dialog.on('click','#goToLine',function (){
-                var totalLines = editor.lineCount();
-                var lineToGoTo = parseInt($dialog.find('#inputLineNumber').val());
+        $dialog.on('click','#goToLine',function (){
+            var editor = EditorManager.getCurrentFullEditor(),                
+                lineToGoTo = parseInt($dialog.find('#inputLineNumber').val()) - 1;
                 
-                if(lineToGoTo <= totalLines && currentLine != lineToGoTo){
-                    console.log(lineToGoTo);
-                    dialog.close();
-                    editor.setCursorPos(lineToGoTo, 1, true);
-                }
-                
-            });
-        }         
+            if(editor && lineToGoTo <= totalLines && currentLine != lineToGoTo){
+                console.log(lineToGoTo);
+                dialog.close();                
+                MainViewManager.focusActivePane();
+                editor.setCursorPos(lineToGoTo, 1, true);
+            }
+        });
     }
 
     AppInit.appReady(function () {
