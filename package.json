@@ -1,0 +1,12 @@
+{
+    "name": "mzografski.gotoline",
+    "title": "Go to line ExtPOC",
+    "description": "Go to line ExtPOC.",
+    "homepage": "https://github.com/TINITUS/gotoline-brackets.io-extension",
+    "version": "1.0.0",
+    "author": "Miroslav Zografski <mzografski@gmail.com> (http://zograficcodes.com/)",
+    "license": "MIT",
+    "engines": {
+        "brackets": ">=1.1"
+    }
+}
